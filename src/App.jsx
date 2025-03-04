@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+"use client"
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useState } from "react"
+import Sidebar from "./components/sidebar"
+import Header from "./components/header"
+import Dashboard from "./components/dashboard"
+import { AuthProvider, useAuth } from "./contexts/AuthContext"
+import LoginModal from "./components/LoginModal"
+
+function AppContent() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const { user } = useAuth();
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen)
+  }
+
+  if (!user) {
+    return <LoginModal />;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <Header toggleSidebar={toggleSidebar} />
+        <Dashboard />
       </div>
-      <h1>Vite + React Admin Test push</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 
 export default App
+
