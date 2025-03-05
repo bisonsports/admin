@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext"
 import { useState } from "react"
 
 const Header = ({ toggleSidebar }) => {
-  const { logOut, managerName, stadiumName } = useAuth();
+  const { logOut, managerData, stadiumData } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [error, setError] = useState('');
 
@@ -28,7 +28,7 @@ const Header = ({ toggleSidebar }) => {
 
       <div className="flex-1 lg:ml-4">
         <h2 className="text-xl font-semibold text-gray-800">
-          {stadiumName || 'Loading Stadium...'}
+          {stadiumData?.name || 'Loading Stadium...'}
         </h2>
       </div>
 
@@ -39,7 +39,7 @@ const Header = ({ toggleSidebar }) => {
         <div className="flex items-center gap-2">
           <User size={18} className="text-gray-600" />
           <span className="text-gray-700 font-medium">
-            Welcome, {managerName || 'Loading...'}
+            Welcome, {managerData?.name || 'Loading...'}
           </span>
         </div>
         <button 
