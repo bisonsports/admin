@@ -51,11 +51,7 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
   };
 
   const formatTime = (time) => {
-    return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+    return time;
   };
 
   if (!isOpen) return null;
