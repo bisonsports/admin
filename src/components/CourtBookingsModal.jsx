@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ChevronLeft, ChevronRight, Calendar, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Plus, Clock } from 'lucide-react';
 import AddBookingModal from './AddBookingModal';
+import InactiveHoursModal from './InactiveHoursModal';
 
 export default function CourtBookingsModal({ isOpen, onClose, court }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -10,6 +11,7 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isAddBookingModalOpen, setIsAddBookingModalOpen] = useState(false);
+  const [isInactiveHoursModalOpen, setIsInactiveHoursModalOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen && court) {
@@ -20,7 +22,7 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const dateStr = selectedDate.toISOString().split('T')[0];
+      const dateStr = selectedDate.toLocaleDateString('en-CA');
       const bookingsRef = collection(db, 'bookings');
       const q = query(
         bookingsRef,
@@ -47,6 +49,7 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
   const handleDateChange = (days) => {
     const newDate = new Date(selectedDate);
     newDate.setDate(newDate.getDate() + days);
+    newDate.setHours(0, 0, 0, 0);
     setSelectedDate(newDate);
   };
 
@@ -88,12 +91,21 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
               </button>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-          >
-            Close
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsInactiveHoursModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 text-yellow-700 bg-yellow-100 hover:bg-yellow-200 rounded-md transition-colors duration-200"
+            >
+              <Clock size={18} />
+              Inactive Hours
+            </button>
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              Close
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -148,13 +160,16 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
         )}
       </div>
 
-      {/* Floating Add Booking Button */}
-      <button
-        onClick={() => setIsAddBookingModalOpen(true)}
-        className="fixed bottom-8 right-8 flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-200 z-50"
-      >
-        <Plus size={24} />
-      </button>
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-8 right-8">
+        <button
+          onClick={() => setIsAddBookingModalOpen(true)}
+          className="flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-200"
+          title="Add Booking"
+        >
+          <Plus size={24} />
+        </button>
+      </div>
 
       <AddBookingModal
         isOpen={isAddBookingModalOpen}
@@ -164,6 +179,16 @@ export default function CourtBookingsModal({ isOpen, onClose, court }) {
           fetchBookings();
         }}
         court={court}
+      />
+
+      <InactiveHoursModal
+        isOpen={isInactiveHoursModalOpen}
+        onClose={() => setIsInactiveHoursModalOpen(false)}
+        onSave={() => {
+          setIsInactiveHoursModalOpen(false);
+          fetchBookings();
+        }}
+        courts={[court]}
       />
     </div>
   );
