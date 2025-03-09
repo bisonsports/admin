@@ -135,10 +135,12 @@ export default function CourtEditModal({ isOpen, onClose, onSave, stadiumId, cou
               <option value="">Select sport</option>
               <option value="Badminton">Badminton</option>
               <option value="Cricket">Cricket</option>
+              <option value="Football">Football</option>
+              <option value="Volleyball">Swimming</option>
+              <option value="Volleyball">Gymnastics</option>
+              <option value="Volleyball">Volleyball</option>
               <option value="Basketball">Basketball</option>
               <option value="Tennis">Tennis</option>
-              <option value="Football">Football</option>
-              <option value="Volleyball">Volleyball</option>
             </select>
           </div>
 
@@ -151,9 +153,11 @@ export default function CourtEditModal({ isOpen, onClose, onSave, stadiumId, cou
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               required
             >
-              <option value="">Select court type</option>
+              <option value="">Select sport/court type</option>
+              <option value="Turf">Artistc </option>
+              <option value="Turf">Trampoline and Tumbling </option>
               <option value="Turf">Turf</option>
-              <option value="Clay">Clay</option>
+              <option value="Clay">Toddlers </option>
               <option value="Grass">Grass</option>
               <option value="Hard">Hard</option>
               <option value="Synthetic">Synthetic</option>

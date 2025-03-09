@@ -3,6 +3,9 @@ import { useAuth } from "../contexts/AuthContext"
 import { useState, useEffect } from "react"
 import EditStadiumModal from "./EditStadiumModal"
 import CourtListModal from "./CourtListModal"
+import UsersListModal from "./UsersListModal"
+import ExpiryBookingsModal from "./ExpiryBookingsModal"
+import CoachesModal from "./CoachesModal"
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -10,7 +13,19 @@ const Dashboard = () => {
   const { stadiumData, managerData } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCourtListModalOpen, setIsCourtListModalOpen] = useState(false);
+  const [isUsersListModalOpen, setIsUsersListModalOpen] = useState(false);
+  const [isExpiryBookingsModalOpen, setIsExpiryBookingsModalOpen] = useState(false);
+  const [isCoachesModalOpen, setIsCoachesModalOpen] = useState(false);
   const [courtCount, setCourtCount] = useState(0);
+  const [selectedVenue, setSelectedVenue] = useState('');
+
+  const venues = [
+    "Flair Gymnastics Club",
+    "Infinito Arena",
+    "Siddhant's Badminton Academy",
+    "MPP Sports Park",
+    "Dwarkadhish Gymnastics Club"
+  ];
 
   useEffect(() => {
     if (managerData?.stadiumID) {
@@ -77,13 +92,15 @@ const Dashboard = () => {
       count: "1,234",
       description: "Total registered users",
       color: "bg-blue-500",
+      onClick: () => setIsUsersListModalOpen(true)
     },
     {
-      title: "Payment History",
+      title: "Expiries/Bookings",
       icon: CreditCard,
-      count: "$12,345",
-      description: "Total transactions",
+      count: "Recent",
+      description: "View expiring & recent bookings",
       color: "bg-green-500",
+      onClick: () => setIsExpiryBookingsModalOpen(true)
     },
     {
       title: "Coaches",
@@ -91,6 +108,7 @@ const Dashboard = () => {
       count: "42",
       description: "Active coaches",
       color: "bg-purple-500",
+      onClick: () => setIsCoachesModalOpen(true)
     },
     {
       title: "Court Details",
@@ -111,6 +129,23 @@ const Dashboard = () => {
 
   return (
     <main className="flex-1 overflow-y-auto p-4 md:p-6">
+      <div className="flex justify-end mb-6">
+        <div className="relative w-64">
+          <select
+            value={selectedVenue}
+            onChange={(e) => setSelectedVenue(e.target.value)}
+            className="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="">Select Venue</option>
+            {venues.map((venue, index) => (
+              <option key={index} value={venue}>
+                {venue}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card, index) => (
           <div 
@@ -159,6 +194,22 @@ const Dashboard = () => {
       <CourtListModal
         isOpen={isCourtListModalOpen}
         onClose={() => setIsCourtListModalOpen(false)}
+        stadiumId={managerData?.stadiumID}
+      />
+
+      <UsersListModal
+        isOpen={isUsersListModalOpen}
+        onClose={() => setIsUsersListModalOpen(false)}
+      />
+
+      <ExpiryBookingsModal
+        isOpen={isExpiryBookingsModalOpen}
+        onClose={() => setIsExpiryBookingsModalOpen(false)}
+      />
+
+      <CoachesModal
+        isOpen={isCoachesModalOpen}
+        onClose={() => setIsCoachesModalOpen(false)}
         stadiumId={managerData?.stadiumID}
       />
     </main>
